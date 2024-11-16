@@ -27,6 +27,7 @@ class UriEventHandler extends EventEmitter<Uri> implements UriHandler {
   }
 }
 
+
 export class AuthProvider implements AuthenticationProvider, Disposable {
   private _sessionChangeEmitter = new EventEmitter<AuthenticationProviderAuthenticationSessionsChangeEvent>();
   private _disposable: Disposable;
@@ -52,12 +53,14 @@ export class AuthProvider implements AuthenticationProvider, Disposable {
     return `${env.uriScheme}://${publisher}.${name}`;
   }
 
-  /**
-   * Get the existing sessions
-   * @param scopes 
-   * @returns 
-   */
-  public async getSessions(scopes?: string[]): Promise<readonly AuthenticationSession[]> {
+
+  //Session Management section (getSessions, createSession, updateSession, removeSession):
+  // - unique jwtToken
+  // - stores sessions in context.secrets
+  // - New sessions can be created, existing sessions updated, and sessions removed
+  // - _sessionChangeEmitter notifies VS Code of any session changes so the UI can update.
+  //here, I changed the returned Promise so it's not readonly anymore
+  public async getSessions(scopes?: string[]): Promise<AuthenticationSession[]> {
     const allSessions = await this.context.secrets.get(SESSIONS_KEY);
 
     if (allSessions) {
@@ -141,19 +144,19 @@ export class AuthProvider implements AuthenticationProvider, Disposable {
       }
     }
   }
+  // End of SEssion Management Section
 
-  /**
-   * Dispose the registered services
-   */
+  //Dispose the registered services
   public async dispose() {
     this._disposable.dispose();
   }
 
-  /**
-   * Auth Log
-   */
+  //USER LOGIN SECTION (login, promiseFromEvent, handleUri, redirectUri)
+  // - login method initiates OAuth-based login flow, typically opening a login page in external browser where the user authenticates
+  // - After login, the OAuth provider redirects the user back to a specific VS Code URI (set by  redirectUri method).
+  // - handleUri captures the access token from this redirect and completes the authentication process.
   private async login(scopes: string[] = []) {
-    return await window.withProgress<string>({
+    return await window.withProgress<string>({  
       location: ProgressLocation.Notification,
       title: "Signing in to Software.com...",
       cancellable: true
@@ -235,6 +238,9 @@ export class AuthProvider implements AuthenticationProvider, Disposable {
     }
 }
 
+// End of USER LOGIN SECTION
+// End of AuthProvider CLASS
+
 export interface PromiseAdapter<T, U> {
   (
     value: T,
@@ -245,6 +251,14 @@ export interface PromiseAdapter<T, U> {
   ): any;
 }
 
+
+// Event Handling Section  (promiseFromEvent, handleUri):
+
+// - (promiseFromEvent) listens for specific events (e.g., URI redirection or login timeout)
+//   and returns a promise that resolves or rejects based on the event outcome.
+
+// - (handleUri) specifically deals with the URI redirection. It extracts the access_token from 
+//   the redirect URI and verifies it against the expected state, ensuring a secure login process.
 const passthrough = (value: any, resolve: (value?: any) => void) => resolve(value);
 
 /**

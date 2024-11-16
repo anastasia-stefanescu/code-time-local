@@ -40,8 +40,8 @@ export async function enableFlow({automated = false}) {
       title: 'Enabling flow...',
       cancellable: false,
     },
-    async (progress) => {
-      await initiateFlow({automated}).catch((e) => {
+    async (progress) => {  //Calling initiateFlow to handle the process of entering Flow Mode
+      await initiateFlow({automated}).catch((e) => { //If an error occurs, it logs an error message.
         console.error('[Code Time] Unable to initiate flow. ', e.message);
       });
     }
@@ -49,7 +49,8 @@ export async function enableFlow({automated = false}) {
 }
 
 export async function initiateFlow({automated = false}) {
-  if (!isRegistered() && !automated) {
+  if (!isRegistered() && !automated) { 
+    //If the user isn’t registered and this is a manual attempt (not automated), it prompts the user to sign up or log in.
     // manually initiated, show the flow mode prompt
     showModalSignupPrompt('To enable Flow Mode, please sign up or log in.');
     return;
@@ -73,7 +74,7 @@ export async function initiateFlow({automated = false}) {
   const flowEnabled = isFlowModeEnabled();
   if (primary && !flowEnabled) {
     logIt('Entering Flow Mode');
-    await appPost('/plugin/flow_sessions', { automated: automated });
+    await appPost('/plugin/flow_sessions', { automated: automated }); //Sends a request to the server to start a flow session.
     // only update flow change here
     inFlowLocally = true;
     updateFlowChange(true);
@@ -88,10 +89,10 @@ export async function initiateFlow({automated = false}) {
     showNormalScreenMode();
   }
 
-  updateFlowStatus();
+  updateFlowStatus(); //update the UI and notify the user.
 }
 
-export async function pauseFlow() {
+export async function pauseFlow() { //Displaying a "Turning off flow..." progress notification.
   window.withProgress(
     {
       location: ProgressLocation.Notification,
@@ -99,7 +100,7 @@ export async function pauseFlow() {
       cancellable: false,
     },
     async (progress) => {
-      await pauseFlowInitiate().catch((e) => {});
+      await pauseFlowInitiate().catch((e) => {}); //handle the actual flow pausing, logging errors if they occur.
     }
   );
 }

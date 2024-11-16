@@ -34,6 +34,10 @@ export function getRandomNumberWithinRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+/**
+ * Returns a unique identifier for the workspace.
+ * The first time this is called, it generates a uuidv4 and stores it in memory.
+ */
 export function getWorkspaceName() {
   if (!workspace_name) {
     workspace_name = uuidv4();
@@ -163,6 +167,14 @@ export function getPluginUuid() {
   return plugin_uuid;
 }
 
+  /**
+   * Retrieves the auth callback state from the device file, or creates a new one if
+   * none exists and the autoCreate flag is true.
+   * @param {boolean} [autoCreate=true] - If true, creates a new auth callback
+   * state if none exists.
+   * @returns {string|null} - The auth callback state, or null if none exists and
+   * autoCreate is false.
+   */
 export function getAuthCallbackState(autoCreate = true) {
   let auth_callback_state = getJsonItem(getDeviceFile(), 'auth_callback_state', false);
   if (!auth_callback_state && autoCreate) {
@@ -413,6 +425,9 @@ export function musicTimeExtInstalled() {
   return !!extensions.getExtension(MUSIC_TIME_EXT_ID);
 }
 
+/**
+ * Checks if the Editor Ops extension is installed.
+ */
 export function editorOpsExtInstalled() {
   return !!extensions.getExtension(EDITOR_OPS_EXT_ID)
 }

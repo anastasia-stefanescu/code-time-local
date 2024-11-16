@@ -5,6 +5,8 @@ import {configureSettings, showingConfigureSettingsPanel} from './ConfigManager'
 import {getWorkspaceName, isPrimaryWindow, setItem} from '../Util';
 import { checkWebsocketConnection } from '../websockets';
 
+import { setTimeout } from 'timers';
+
 export class ChangeStateManager {
   private static instance: ChangeStateManager;
   private disposable: Disposable;
@@ -13,26 +15,28 @@ export class ChangeStateManager {
   constructor() {
     let subscriptions: Disposable[] = [];
 
-    this.tracker = TrackerManager.getInstance();
+    this.tracker = TrackerManager.getInstance(); //Initializes TrackerManager (handles tracking actions).
 
-    const iface: VSCodeInterface = {
+    const iface: VSCodeInterface = { // interface to access VSCode API
       disposable: Disposable,
       window: window,
       workspace: workspace,
     };
 
+    //Sets up the editorFlow instance and listens for editor_flow_data events. 
+    //The events can be file saves, focus changes, theme changes, and user metrics (KPM).
     const editorFlow: EditorFlow = EditorFlow.getInstance(EditorType.VSCODE, iface);
     const emitter: any = editorFlow.getEmitter();
 
     emitter.on('editor_flow_data', (data: any) => {
       switch (data.flow_event_type) {
-        case FlowEventType.SAVE:
+        case FlowEventType.SAVE: //saved file
           this.fileSaveHandler(data.event);
           break;
-        case FlowEventType.UNFOCUS:
+        case FlowEventType.UNFOCUS: //unfocused
           this.windowStateChangeHandler(data.event);
           break;
-        case FlowEventType.FOCUS:
+        case FlowEventType.FOCUS: 
           this.windowStateChangeHandler(data.event);
           break;
         case FlowEventType.THEME:
@@ -46,6 +50,8 @@ export class ChangeStateManager {
     });
 
     this.disposable = Disposable.from(...subscriptions);
+    //cleans up the resources by disposing of the Disposable instance.
+
   }
 
   static getInstance(): ChangeStateManager {
@@ -65,14 +71,15 @@ export class ChangeStateManager {
   }
 
   private windowStateChangeHandler(event: any) {
-    if (event.focused) {
-      this.tracker.trackEditorAction('editor', 'focus');
-      setItem('vscode_primary_window', getWorkspaceName());
+    if (event.focused) { //If the editor window has just gained focus 
+      this.tracker.trackEditorAction('editor', 'focus');  //log an editor focus event,
+      setItem('vscode_primary_window', getWorkspaceName()); //stores the workspace name 
+      //as the primary window identifier. This could help keep track of which window is currently "active" in multi-window setups.
       // check if the websocket connection is stale
-      checkWebsocketConnection();
+      checkWebsocketConnection(); // verify that the websocket connection (possibly used for real-time updates or data syncing) is still active.
     } else if (isPrimaryWindow() && event.active) {
-      // primary editor window is unfocused
-      this.tracker.trackEditorAction('editor', 'unfocus');
+      //editor window loses focus and meets the criteria of being the primary window
+      this.tracker.trackEditorAction('editor', 'unfocus'); //  log that the primary editor window has lost focus
     }
   }
 
