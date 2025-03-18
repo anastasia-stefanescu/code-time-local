@@ -1,5 +1,8 @@
 import {getImage} from '../Util';
 
+/**
+ * Returns HTML that displays a friendly error message when the Code Time sidebar is unable to connect to the server.
+ */
 export async function getConnectionErrorHtml() {
   const dancePartyImg = `vscode-resource:${getImage('404-image.png')}`;
   return `<!DOCTYPE html>

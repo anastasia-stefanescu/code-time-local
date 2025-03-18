@@ -52,6 +52,8 @@ export class TrackerManager {
     swdcTracker.dispose();
   }
 
+  //Initializes the swdcTracker by providing the API endpoint and other identifying parameters. 
+  //When successfully initialized, it sets trackerReady to true, allowing tracking to proceed.
   public async init() {
     // initialize tracker with swdc api host, namespace, and appId
     const result = await swdcTracker.initialize(api_endpoint, 'CodeTime', 'swdc-vscode');

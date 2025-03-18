@@ -1,4 +1,4 @@
-import axios from 'axios';
+const axios = require('axios') // or put esModuleInterop flag in tsconfig
 import { version, window } from 'vscode';
 import { api_endpoint, app_url, TWENTY_SEC_TIMEOUT_MILLIS } from '../Constants';
 import {
@@ -174,6 +174,10 @@ function getResponseStatus(resp: any) {
   return status;
 }
 
+/**
+ * Gets the authorization token from storage, formatted as a Bearer token.
+ * @returns {string|null} The authorization token, or null if no token is found.
+ */
 function getAuthorization() {
   let token = getItem('jwt');
   if (token?.includes('JWT ')) {

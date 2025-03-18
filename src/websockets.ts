@@ -7,16 +7,16 @@ import { handleFlowStateMessage } from './message_handlers/flow_state';
 import { userDeletedCompletionHandler } from './DataController';
 import { setEndOfDayNotification } from './notifications/endOfDay';
 import { handleAuthenticatedPluginUser } from './message_handlers/authenticated_plugin_user';
-
+import { setTimeout, clearTimeout } from 'timers';
 const WebSocket = require('ws');
 
 // The server should send its timeout to allow the client to adjust.
 // Default of 30 minutes
 const DEFAULT_PING_INTERVAL_MILLIS = ONE_MIN_MILLIS * 30;
 let SERVER_PING_INTERVAL_MILLIS = DEFAULT_PING_INTERVAL_MILLIS + ONE_MIN_MILLIS;
-let livenessPingTimeout: NodeJS.Timer | undefined = undefined;
+let livenessPingTimeout: NodeJS.Timeout | undefined = undefined;
 let lastPingResetMillis: number = 0;
-let retryTimeout: NodeJS.Timer | undefined = undefined;
+let retryTimeout: NodeJS.Timeout | undefined = undefined;
 
 // Reconnect constants
 const INITIAL_RECONNECT_DELAY: number = 12000;

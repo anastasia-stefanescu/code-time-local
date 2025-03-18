@@ -123,7 +123,7 @@ export async function intializePlugin() {
   await tracker.init();
 
   // initialize user and preferences
-  if (!user) user = await getUser();
+  if (!user) user = await getUser(); //de ce ar putea sa nu fie initializat aici
 
   // show the sidebar if this is the 1st
   if (!getBooleanItem('vscode_CtInit')) {

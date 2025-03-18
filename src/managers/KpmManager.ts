@@ -12,6 +12,9 @@ export class KpmManager {
 
   private tracker: TrackerManager;
 
+  /**
+   * The KpmManager class listens for changes to the .git directory and posts events to the CodeTime Web API.
+  **/
   constructor() {
     let subscriptions: Disposable[] = [];
     this.tracker = TrackerManager.getInstance();
@@ -19,7 +22,7 @@ export class KpmManager {
     const workspaceFolder = getFirstWorkspaceFolder();
     if (workspaceFolder) {
       // Watch .git directory changes
-      // Only works if the git directory is in the workspace
+      // !! Only works if the git directory is in the workspace
       const localGitWatcher = workspace.createFileSystemWatcher(
         new RelativePattern(workspaceFolder, '{**/.git/refs/heads/**}')
       );
