@@ -75,7 +75,10 @@ export async function activate(ctx: ExtensionContext) {
   ctx.subscriptions.push(createCommands(ctx, kpmController, storageManager));
   TrackerManager.storageMgr = storageManager;
 
-  // session: {id: <String>, accessToken: <String>, account: {label: <String>, id: <Number>}, scopes: [<String>,...]}
+  // get a session: {id: <String>, accessToken: <String>, account: {label: <String>, id: <Number>}, scopes: [<String>,...]}
+  // If the user is already signed in with the specified authentication provider, it fetches the existing session.
+  // If no session exists or the requested scopes require it, it can prompt the user to sign in or authorize the required access.
+  // The session includes an access token that extensions can use to interact with APIs or services that require authentication.
   const session = await authentication.getSession(AUTH_TYPE, [], { createIfNone: false });
   let jwt = getItem('jwt');
   user = await getUser();
@@ -164,6 +167,13 @@ export async function intializePlugin() {
   }, 5000);
 }
 
+function initializeSession(storageManager: LocalStorageManager) {
+  if (window.state.focused) {
+    setItem('vscode_primary_window', getWorkspaceName());
+    if (storageManager) storageManager.clearDupStorageKeys();
+  }
+}
+
 export function getCurrentColorKind() {
   if (!currentColorKind) {
     currentColorKind = window.activeColorTheme.kind;
@@ -171,9 +181,4 @@ export function getCurrentColorKind() {
   return currentColorKind;
 }
 
-function initializeSession(storageManager: LocalStorageManager) {
-  if (window.state.focused) {
-    setItem('vscode_primary_window', getWorkspaceName());
-    if (storageManager) storageManager.clearDupStorageKeys();
-  }
-}
+

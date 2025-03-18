@@ -9,7 +9,7 @@ import {
   EDITOR_OPS_EXT_ID
 } from './Constants';
 import { v4 as uuidv4 } from 'uuid';
-
+import {URLSearchParams } from 'url';
 import {showModalSignupPrompt} from './managers/SlackManager';
 import {execCmd} from './managers/ExecManager';
 import {getBooleanJsonItem, getJsonItem, setJsonItem, storeJsonData} from './managers/FileManager';

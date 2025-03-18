@@ -54,16 +54,19 @@ export class KpmManager {
     const stat = fs.statSync(event.path);
     if (!stat?.isFile()) return;
 
-    if (event.path.includes('/.git/refs/heads/')) {
+    //Ensure the Event is for a File:
+    //It then synchronously gets file statistics for the path specified in the event using fs.statSync(event.path)
+    
+    if (event.path.includes('/.git/refs/heads/')) { //locals!
       // /.git/refs/heads/<branch_name>
-      const branch = event.path.split('.git/')[1];
+      const branch = event.path.split('.git/')[1]; // extract branch name
       let commit;
       try {
         commit = fs.readFileSync(event.path, 'utf8').trimEnd();
       } catch (err: any) {
         logIt(`Error reading ${event.path}: ${err.message}`);
       }
-      this.tracker.trackGitLocalEvent('local_commit', branch, commit);
+      this.tracker.trackGitLocalEvent('local_commit', branch, commit); // records local commit 
     } else if (event.path.includes('/.git/refs/remotes/')) {
       // /.git/refs/remotes/<branch_name>
       this.tracker.trackGitRemoteEvent(event);

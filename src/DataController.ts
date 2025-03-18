@@ -96,7 +96,7 @@ export async function reload() {
   } catch (e: any) {
     logIt(`Failed to initialize websockets: ${e.message}`);
   }
-
+  
   // re-initialize user and preferences
   await getUser();
 

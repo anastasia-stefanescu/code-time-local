@@ -40,7 +40,7 @@
   "engines": {
     "vscode": "^1.66.0"
   },
-  "main": "./dist/extension.js",
+  "main": "./dist/src/extension.js",
   "scripts": {
     "lint": "tslint -p ./",
     "build": "vsce package --yarn",
@@ -145,6 +145,7 @@
     "node-cache": "^5.1.2",
     "open": "^8.4.2",
     "swdc-tracker": "1.5.7",
+    "url": "^0.11.4",
     "uuid": "^9.0.1",
     "ws": "^8.18.0"
   }

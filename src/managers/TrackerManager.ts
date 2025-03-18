@@ -257,6 +257,7 @@ export class TrackerManager {
     swdcTracker.trackGitEvent(gitEvent);
   }
 
+  //when closing file 
   public async trackEditorAction(entity: string, type: string, event?: any) {
     if (!this.trackerReady) {
       return;

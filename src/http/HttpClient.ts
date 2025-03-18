@@ -14,11 +14,13 @@ import {
 } from '../Util';
 
 // build the axios api base url
+// BACKEND API
 const beApi: any = axios.create({
   baseURL: `${api_endpoint}`,
   timeout: TWENTY_SEC_TIMEOUT_MILLIS,
 });
 
+// APPLICATION_LEVEL API
 const appApi: any = axios.create({
   baseURL: `${app_url}`,
   timeout: 15000,

@@ -42,10 +42,16 @@ export class AuthProvider implements AuthenticationProvider, Disposable {
     instance = this;
   }
 
-  get onDidChangeSessions() {
+  get onDidChangeSessions() { //An Event which fires when the array of sessions has changed, or data within a session has changed.
     return this._sessionChangeEmitter.event;
   }
 
+  /**
+   * Get the redirect URI for the authentication provider
+   * The redirect URI is built from the extension's publisher and name
+   * and the uri scheme of the environment.
+   * @returns {string} The redirect URI
+   */
   get redirectUri() {
     const publisher = this.context.extension.packageJSON.publisher;
     const name = this.context.extension.packageJSON.name;

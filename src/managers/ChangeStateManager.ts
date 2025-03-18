@@ -15,7 +15,7 @@ export class ChangeStateManager {
 
     this.tracker = TrackerManager.getInstance();
 
-    const iface: VSCodeInterface = {
+    const iface: VSCodeInterface = { 
       disposable: Disposable,
       window: window,
       workspace: workspace,
@@ -24,7 +24,7 @@ export class ChangeStateManager {
     const editorFlow: EditorFlow = EditorFlow.getInstance(EditorType.VSCODE, iface);
     const emitter: any = editorFlow.getEmitter();
 
-    emitter.on('editor_flow_data', (data: any) => {
+    emitter.on('editor_flow_data', (data: any) => { 
       switch (data.flow_event_type) {
         case FlowEventType.SAVE:
           this.fileSaveHandler(data.event);
